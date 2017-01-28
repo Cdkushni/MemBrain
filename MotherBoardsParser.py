@@ -262,13 +262,23 @@ for MOBO in MOBOs:
                 socket = 'AM3+'
             elif 'FM2+' in new4[1]:
                 socket = 'FM2+'
+            elif 'LGA 1151' in brandSock:
+                socket = 'LGA1151'
         except:
-            socket = 'N/A'
+            if 'SkyLake Processors for LGA 1151' in brandSock:
+                socket = 'LGA1151'
+            else:
+                socket = 'N/A'
     else:
         if 'LGA' in brandSock:
             socket = brandSock.split('LGA')[1]
-            socket = socket.split(' ')[0]
+            socket = socket.split(' ')
+            if socket[0] == '':
+                socket = socket[1]
+            else:
+                socket = socket[0]
             socket = 'LGA' + socket
+            socket = socket.split('</td>')[0]
         else:
             top = new4[0].split(' ')
             bottom = new4[1].split(' ')
