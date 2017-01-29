@@ -244,8 +244,6 @@ for MOBO in MOBOs:
     # # Socket
     # LGA number or number LGA or Socket Number or Number Socket
     # Find AMD AM1, AMD AM3+, AMD FM2+
-    if MXNum == 'MX63071':
-        print('MEOW')
     new4 = new1[1].split('</table>')[0]
     brandSock = new4
     new4 = new4.split('Socket')
@@ -266,7 +264,7 @@ for MOBO in MOBOs:
             elif 'LGA 1151' in brandSock:
                 socket = 'LGA1151'
             elif 'Socket 1151' in brandSock:
-                socket = '1151'
+                socket = 'LGA1151'
         except:
             if 'SkyLake Processors for LGA 1151' in brandSock:
                 socket = 'LGA1151'
@@ -293,7 +291,7 @@ for MOBO in MOBOs:
                 socketNum = re.search(r'\d+',top[len(top)-1]).group()
             except:
                 socketNum = re.search(r'\d+',bottom[0]).group()
-            socket = socketNum
+            socket = 'LGA' + socketNum
     socket = socket.split('<br')[0]
     socket = socket.split('\n')[0]
     socket = socket.split('\r')[0]
@@ -315,39 +313,3 @@ for MOBO in MOBOs:
 
     FormFactor = new3.strip()
     print(MXNum + ':' + Price + ':' + FormFactor + ':' + MemSlots + ':' + socket + ':' + str(inteGPU))
-
-
-
-
-# form_factor_strs = ['Form Factor','Dimensions (LxW)']
-# for i in form_factor_strs:
-#     try:
-#         new3.index(i)
-#         new3.split('<th>' + str(i) + '</th>')[1]
-#     except ValueError:
-#         pass
-# new3 = new3.split('</td>')[0]
-# new3 = new3.split('<td>')[1]
-
-
-#
-
-
-# # Sata ports
-# new5 = new1[1].split('</table>')[0]
-# sata_strs = ['Internal I/O Ports', 'Internal I/O Connectors']`
-# for i in sata_strs:
-#     try:
-#         new5.index(i)
-#         new5.split(str(i))[1]
-#     except ValueError:
-#         pass
-# # new5 = new5.split('SATA')[0]
-# # new5 = new5[-3:].replace(' ', '').replace('x', '')
-#
-
-
-# print(new6)
-# print(new5)
-# print(new3)
-# print(new2)
