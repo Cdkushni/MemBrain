@@ -312,4 +312,4 @@ for MOBO in MOBOs:
             inteGPU = False
 
     FormFactor = new3.strip()
-    print(MXNum + ':' + Price + ':' + FormFactor + ':' + MemSlots + ':' + socket + ':' + str(inteGPU))
+    print(MXNum + ':' + Price + ':' + Title + ':' + FormFactor + ':' + MemSlots + ':' + socket + ':' + str(inteGPU))
