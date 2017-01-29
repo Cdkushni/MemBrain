@@ -23,7 +23,7 @@ newFile2.close()
 newFile3 = open('database.txt', 'r')
 lines2 = newFile3.read()
 GPUs = lines2.split('VideoCards!')
-GPUs = GPUs[1].split('Cooling!')
+GPUs = GPUs[1].split('CoolingCPU!')
 GPUs = GPUs[0]
 GPUs = GPUs.splitlines()
 GPUs.pop(0)
@@ -112,6 +112,54 @@ for GPU in GPUs:
                 break
     except:
         continue
+
+    MXName = GPU.split(':')[0]
+    Price = GPU.split(':')[1]
+    GBFinder = GPU.split(':')[2]
+    GBFinder = GBFinder.split('GB')[0]
+    GBFinder = GBFinder[len(GBFinder)-1]
+    GPUName2 = GPU.split(':')[2]
+
+    base_address = 'http://www.memoryexpress.com/Products/'
+
+    page = base_address + MXName
+    with urllib.request.urlopen(page) as response:
+        the_page = response.read()
+    gpuPowerLines = str(the_page)
+
+    if '<h3>System Requirements</h3>' in gpuPowerLines:
+        gpuSysReq = gpuPowerLines.split('<h3>System Requirements</h3>')[1]
+        gpuPower1 = gpuSysReq.split('</ul>')[0]
+        gpuPower = gpuSysReq.split('</ul>')[0]
+
+        try:
+            if 'Minimum' in gpuPower:
+                gpuPower = gpuPower.split('Minimum')
+                tempPower = tempPower.split('</li>')[0]
+                tempPower = tempPower.split('W')[0]
+                gpuPower = re.findall('\d+',tempPower)[0]
+            else:
+                gpuPower = re.findall('\d+',gpuPower1)
+                found = False
+                for i in gpuPower:
+                    if len(i) == 3:
+                        gpuPower = i
+                        found = True
+                        break
+                if found == False:
+                    gpuPower = '300'
+        except:
+            gpuPower = re.findall('\d+',gpuPower1)
+            found = False
+            for i in gpuPower:
+                if len(i) == 3:
+                    gpuPower = i
+                    found = True
+                    break
+            if found == False:
+                gpuPower = '300'
+    else:
+        gpuPower = '300'
 
 
     print(MXName + ':' + GPUName2 + ':' + Price + ':' + GBFinder + ':' + GPURank + ':' + gpuPower)
