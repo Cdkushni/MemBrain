@@ -244,11 +244,12 @@ for MOBO in MOBOs:
     # # Socket
     # LGA number or number LGA or Socket Number or Number Socket
     # Find AMD AM1, AMD AM3+, AMD FM2+
-
+    if MXNum == 'MX63071':
+        print('MEOW')
     new4 = new1[1].split('</table>')[0]
     brandSock = new4
     new4 = new4.split('Socket')
-    if 'AMD' in brandSock:
+    if 'AMD' in brandSock and 'LGA' not in brandSock:
         try:
             if 'AM1' in new4[0]:
                 socket = 'AM1'
@@ -264,6 +265,8 @@ for MOBO in MOBOs:
                 socket = 'FM2+'
             elif 'LGA 1151' in brandSock:
                 socket = 'LGA1151'
+            elif 'Socket 1151' in brandSock:
+                socket = '1151'
         except:
             if 'SkyLake Processors for LGA 1151' in brandSock:
                 socket = 'LGA1151'
@@ -272,8 +275,11 @@ for MOBO in MOBOs:
     else:
         if 'LGA' in brandSock:
             socket = brandSock.split('LGA')[1]
+            socket1 = socket
             socket = socket.split(' ')
-            if socket[0] == '':
+            if '2011-3' in socket1:
+                socket = '2011'
+            elif socket[0] == '':
                 socket = socket[1]
             else:
                 socket = socket[0]
@@ -288,11 +294,27 @@ for MOBO in MOBOs:
             except:
                 socketNum = re.search(r'\d+',bottom[0]).group()
             socket = socketNum
-
-
+    socket = socket.split('<br')[0]
+    socket = socket.split('\n')[0]
+    socket = socket.split('\r')[0]
+    # # Integrated Graphics
+    new6 = new1[1].split('</table>')[0]
+    inteGPU = False
+    if 'Integrated Graphics' in new6:
+        checker = new6.split('Integrated Graphics')[1]
+        if 'Not Supported' in checker:
+            inteGPU = False
+        else:
+            inteGPU = True
+    else:
+        checker = new6
+        if 'Integrated' in checker:
+            inteGPU = True
+        else:
+            inteGPU = False
 
     FormFactor = new3.strip()
-    print(MXNum + ':' + Price + ':' + FormFactor + ':' + MemSlots +':' + socket)
+    print(MXNum + ':' + Price + ':' + FormFactor + ':' + MemSlots + ':' + socket + ':' + str(inteGPU))
 
 
 
@@ -323,11 +345,7 @@ for MOBO in MOBOs:
 # # new5 = new5.split('SATA')[0]
 # # new5 = new5[-3:].replace(' ', '').replace('x', '')
 #
-# # Integrated Graphics
-# new6 = new1[1].split('</table>')[0]
-# new6 = new6.split('<th>Integrated Graphics</th>')[1]
-# new6 = new6.split('</td>')[0]
-# new6 = new6.split('<td>')[1]
+
 
 # print(new6)
 # print(new5)
