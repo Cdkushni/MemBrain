@@ -25,6 +25,13 @@ for cooler in COOL:
     except ValueError:
         pass
 
+    if 'Fan Holder' in Title_str:
+        continue
+    elif 'Retention Bracket' in Title_str:
+        continue
+    elif 'Thermal Solution' in Title_str:
+        continue
+
     Output_line.append(Type)
     Output_line = ':'.join(map(str, Output_line))
     outString = ''
@@ -96,6 +103,7 @@ for cooler in COOL:
 
     ## grabbing TDP
     TDP = '200'
+    outHeight = 'N/A'
     if Type == True:
         # not a water cooler so we can find TDP
         if 'Watt' in the_page:
@@ -119,6 +127,93 @@ for cooler in COOL:
             elif float(Price) > 100.0:
                 TDP = 220
 
-    outString = outString + ':' + str(TDP)
+        # getting non water cooler heights
+        if '<h3>Specifications</h3>' in the_page:
+            heightParse = the_page.split('<h3>Specifications</h3>')[1]
+            heightParse = heightParse.split('</table>')[0]
+            heightParseList = heightParse.split('<th>')
+            heights = []
+            for item in heightParseList:
+                if 'mm' in item and 'mm-H2O' not in item:
+                    item = item.split('</td>')[0]
+                    if 'Diameter' in item:
+                        continue
+                    if 'Heat Pipe Dimensions' in item:
+                        continue
+                    if 'Dimension' not in item:
+                        continue
+                    if ' (H) mm' in item:
+                        heightMM = item.split(' (H) mm')[0]
+                    elif '(H) mm' in item:
+                        heightMM = item.split('(H) mm')[0]
+                    elif 'L mm' in item:
+                        heightMM = item.split('L mm')[0]
+                        heightMM = heightMM.split('<td>')[1]
+                        heightMM = heightMM.split('H*')[0]
+                        heightMM = float(heightMM)
+                        heights.append(heightMM)
+                        continue
+
+                    elif ' mm' in item:
+                        heightMM = item.split(' mm')[0]
+                    elif ' H mm' in item:
+                        heightMM = item.split(' H mm')[0]
+                    elif ' mm (packaging)' in item:
+                        heightMM = item.split(' mm (packaging)')[0]
+                    else:
+                        heightMM = item.split('mm')[0]
+
+                    heightMM = heightMM.split(' ')
+                    try:
+                        heightMM = float(heightMM[len(heightMM)-1])
+                    except:
+                        heightMM = float(heightMM[len(heightMM)-2])
+                    heights.append(heightMM)
+            largestHeight = 0
+            for height in heights:
+                if height > largestHeight:
+                    largestHeight = height
+            outHeight = str(largestHeight)
+        else:
+            if '>Specifications</h3>' in the_page:
+                heightParse = the_page.split('>Specifications</h3>')[1]
+                heightParse = heightParse.split('</table>')[0]
+                heightParseList = heightParse.split('<tr')
+                heights = []
+                for item in heightParseList:
+                    if 'mm' in item and 'mm-H2O' not in item:
+                        item = item.split('</tr>')[0]
+                        if 'Diameter' in item:
+                            continue
+                        if 'Dimension' not in item:
+                            continue
+                        if ' (H) mm' in item:
+                            heightMM = item.split(' (H) mm')[0]
+                        elif '(H) mm' in item:
+                            heightMM = item.split('(H) mm')[0]
+                        elif ' H mm' in item:
+                            heightMM = item.split(' H mm')[0]
+                        elif ' mm (packaging)' in item:
+                            heightMM = item.split(' mm (packaging)')[0]
+                        elif ' mm' in item:
+                            heightMM = item.split(' mm')[0]
+                        else:
+                            heightMM = item.split('mm')[0]
+                        heightMM = heightMM.split('">')
+                        heightMM = heightMM[len(heightMM)-1]
+                        heightMM = heightMM.split(' ')
+                        try:
+                            heightMM = float(heightMM[len(heightMM)-1])
+                        except:
+                            heightMM = float(heightMM[len(heightMM)-2])
+                        heights.append(heightMM)
+                largestHeight = 0
+                for height in heights:
+                    if height > largestHeight:
+                        largestHeight = height
+                outHeight = str(largestHeight)
+
+
+    outString = outString + ':' + str(TDP) + ':' + outHeight
         # printing non water coolers
     print(outString)
